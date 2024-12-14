@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pr-final
+      POSTGRES_DB: pymesdb
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+#  inicio_sesion:
+#    build: ./inicio_sesion
+#    depends_on:
+#      - db
+  
