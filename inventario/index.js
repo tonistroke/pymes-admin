@@ -20,19 +20,14 @@ const pool = new Pool({
 // CRUD Operations for "inventario"
 
 // Create a new inventario record
-app.post('/inventario', async (req, res) => {
-  const { producto_id, departamento_id, inventario_cantidad } = req.body;
-
+app.get('/inventarios', async (req, res) => {
   try {
-    const result = await pool.query(
-      `INSERT INTO inventario (producto_id, departamento_id, inventario_cantidad)
-       VALUES ($1, $2, $3) RETURNING *`,
-      [producto_id, departamento_id, inventario_cantidad]
-    );
-    res.status(201).json(result.rows[0]); // Return created inventario data
+    // Query the 'inventario_depart_prod' view
+    const result = await pool.query('SELECT * FROM inventario_depart_prod');
+    res.status(200).json(result.rows); // Return data from the view
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error creating inventario' });
+    res.status(500).json({ message: 'Error retrieving inventarios' });
   }
 });
 
