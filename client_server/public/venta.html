@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PoS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+    }
+
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .products-list, .cart {
+      width: 48%;
+    }
+
+    .products-list h2, .cart h2 {
+      background-color: #ddd;
+      padding: 10px;
+    }
+
+    .product-item, .cart-item {
+      border: 1px solid #ddd;
+      margin: 5px 0;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-item button, .cart-item button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .cart-item button {
+      background-color: red;
+    }
+
+    .total {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    button {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Sistema POS</h1>
+</header>
+
+<div class="container">
+  <!-- Product List Section -->
+  <div class="products-list">
+    <h2>Available Products</h2>
+    <ul id="product-list"></ul>
+  </div>
+
+  <!-- Cart Section -->
+  <div class="cart">
+    <h2>Your Cart</h2>
+    <ul id="cart-list"></ul>
+    <div class="total" id="total">Total: $0.00</div>
+    <button id="complete-sale">Complete Sale</button>
+  </div>
+</div>
+
+<script>
+  const productList = document.getElementById('product-list');
+  const cartList = document.getElementById('cart-list');
+  const totalElement = document.getElementById('total');
+  const completeSaleButton = document.getElementById('complete-sale');
+
+  let cart = [];
+  let total = 0;
+
+  // Fetch products from the product API
+  fetch('http://localhost:8083/productos')
+    .then(response => response.json())
+    .then(data => {
+      data.forEach(product => {
+        const li = document.createElement('li');
+        li.className = 'product-item';
+        li.innerHTML = `
+          ${product.producto_nombre} - $${product.producto_precio_de_venta} 
+          <button onclick="addToCart(${product.producto_id}, '${product.producto_nombre}', ${product.producto_precio_de_venta})">Add to Cart</button>
+        `;
+        productList.appendChild(li);
+      });
+    });
+
+  // Add a product to the cart
+  function addToCart(productId, productName, productPrice) {
+    const productInCart = cart.find(item => item.id === productId);
+    if (productInCart) {
+      productInCart.quantity++;
+    } else {
+      cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
+    }
+
+    updateCart();
+  }
+
+  // Remove a product from the cart
+  function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    updateCart();
+  }
+
+  // Update the cart view
+  function updateCart() {
+    cartList.innerHTML = '';
+    total = 0;
+
+    cart.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'cart-item';
+      li.innerHTML = `
+        ${item.name} - $${item.price} x ${item.quantity} 
+        <button onclick="removeFromCart(${item.id})">Remove</button>
+      `;
+      cartList.appendChild(li);
+      total += item.price * item.quantity;
+    });
+
+    totalElement.innerText = `Total: $${total.toFixed(2)}`;
+  }
+
+  // Complete the sale
+  completeSaleButton.addEventListener('click', () => {
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+
+    // Collect the products for the sale
+    const products = cart.map(item => ({
+      producto_id: item.id,
+      cantidad: item.quantity
+    }));
+
+    const saleData = {
+      empleado_id: 1,  // Example employee ID, you can change this
+      cliente_id: null, // Optional, or set to a valid customer ID
+      productos: products
+    };
+
+    // Send the sale data to the sale API
+    fetch('http://localhost:8086/venta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(saleData)
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.venta_id) {
+          alert(`Sale completed successfully! Sale ID: ${data.venta_id}`);
+          cart = [];
+          updateCart();
+        } else {
+          alert('Error completing sale');
+        }
+      })
+      .catch(error => {
+        alert('Error completing sale');
+        console.error(error);
+      });
+  });
+</script>
+
+</body>
+</html>

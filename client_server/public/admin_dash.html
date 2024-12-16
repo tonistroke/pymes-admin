@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/admin-dash.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <header class="header">
+      <h1>Admin Dashboard</h1>
+    </header>
+
+    <div class="grid-container">
+      <div class="grid-item">
+        <a href="#" class="link-box" onclick="window.open('http://localhost:3000/', '_blank')">
+          <h2>BI</h2>
+          <p>View business intelligence data</p>
+        </a>
+      </div>
+      <div class="grid-item">
+        <a href="http://localhost:8000/admin-dash/inventario" class="link-box">
+          <h2>Inventario</h2>
+          <p>Manage product inventory</p>
+        </a>
+      </div>
+      <div class="grid-item">
+        <a href="http://localhost:8000/admin-dash/clientes" class="link-box">
+          <h2>Clientes Registrados</h2>
+          <p>View registered clients</p>
+        </a>
+      </div>
+      <div class="grid-item">
+        <a href="http://localhost:8000/admin-dash/empleado" class="link-box">
+          <h2>Empleados</h2>
+          <p>Manage employee data</p>
+        </a>
+      </div>
+      <div class="grid-item">
+        <a href="http://localhost:8000/admin-dash/departamentos" class="link-box">
+          <h2>Departamentos</h2>
+          <p>Manage departments (locales, tiendas, oficinas)</p>
+        </a>
+      </div>
+      <div class="grid-item">
+        <a href="http://localhost:8000/admin-dash/productos" class="link-box">
+          <h2>Productos</h2>
+          <p>Manage product details</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

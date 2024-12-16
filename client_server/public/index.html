@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/log.css">
+</head>
+<body>
+  <div class="login-container">
+    <h1>Login</h1>
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="empleado_email">Email:</label>
+        <input type="email" id="empleado_email" required placeholder="Ingresar email">
+      </div>
+      <div class="input-group">
+        <label for="empleado_pass">Password:</label>
+        <input type="password" id="empleado_pass" required placeholder="Ingresar password">
+      </div>
+      <button type="submit">Login</button>
+      <div id="errorMessage"></div>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const empleado_email = document.getElementById('empleado_email').value;
+      const empleado_pass = document.getElementById('empleado_pass').value;
+
+      try {
+        const response = await fetch('http://localhost:8082/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            empleado_email,
+            empleado_pass
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Redirect based on role (empleado_cargo)
+          if (data.empleado_cargo === 'manager') {
+            window.location.href = 'http://localhost/admin-dash';
+          } else if (data.empleado_cargo === 'seller') {
+            window.location.href = 'http://localhost/sell-dash/venta';
+          }
+        } else {
+          // Show error message
+          errorMessage.textContent = data.message || 'Login failed';
+          errorMessage.style.color = 'red';
+        }
+      } catch (error) {
+        console.error(error);
+        errorMessage.textContent = 'Error connecting to server';
+        errorMessage.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

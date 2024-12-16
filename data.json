@@ -1,0 +1,18 @@
+POST /nueva_venta
+
+{
+    "cliente": uuid,
+    "empleado": 
+    "venta_item": [
+        "venta_item_id": uuid,
+        "cantidad": 12
+    ],
+    "venta_item": [
+        "venta_item_id": uuid,
+        "cantidad": 34
+    ],
+    "venta_item": [
+        "venta_item_id": uuid,
+        "cantidad": 12
+    ]
+}

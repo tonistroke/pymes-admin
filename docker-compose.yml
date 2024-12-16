@@ -10,9 +10,122 @@ services:
       - ./db:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
+    networks:
+      - pymes_network
 
 #  inicio_sesion:
 #    build: ./inicio_sesion
 #    depends_on:
 #      - db
+
+  cola-ventas:
+    image: rabbitmq:3.8-management-alpine
+    container_name: cola_ventas
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - pymes_network
+
+  datos-visualizacion:
+    image: metabase/metabase
+    container_name: visualizador_datos
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./metabase_data:/var/lib/metabase
+    depends_on:
+      - db
+    networks:
+      - pymes_network
+
+  departamento_api:
+    container_name: departamento_api
+    build: 
+      context: ./departamento
+  # network_mode: host
+    ports:
+      - "8081:8081"
+    env_file:
+      - ./departamento/.env
+    depends_on:
+      - db
+    networks:
+      - pymes_network
+
+  empleado_api:
+    container_name: empleado_api
+    build: 
+      context: ./empleado
+  # network_mode: host
+    ports:
+      - "8082:8082"
+    env_file:
+      - ./empleado/.env
+    depends_on:
+      - db
+    networks:
+      - pymes_network
+
+  producto_api:
+    container_name: producto_api
+    build: 
+      context: ./producto
+  # network_mode: host
+    ports:
+      - "8083:8083"
+    env_file:
+      - ./producto/.env
+    depends_on:
+      - db
+    networks:
+      - pymes_network
+
+  cliente_api:
+    container_name: cliente_api
+    build: 
+      context: ./cliente
+  # network_mode: host
+    ports:
+      - "8084:8084"
+    env_file:
+      - ./cliente/.env
+    depends_on:
+      - db
+    networks:
+      - pymes_network
   
+  #inventario_api:
+  #  container_name: inventario_api
+  #  build: 
+  #    context: ./inventario
+  ## network_mode: host
+  #  ports:
+  #    - "8085:8085"
+  #  env_file:
+  #    - ./inventario/.env
+  #  depends_on:
+  #    - db
+  #  networks:
+  #    - pymes_network
+
+  ventas_api:
+    container_name: ventas_api
+    build: 
+      context: ./ventas
+  # network_mode: host
+    ports:
+      - "8086:8086"
+    env_file:
+      - ./ventas/.env
+    depends_on:
+      - db
+    networks:
+      - pymes_network
+
+networks:
+  pymes_network:
+    driver: bridge

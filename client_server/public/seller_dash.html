@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venta Form</title>
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .product-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      background-color: #f0f0f0;
+    }
+    .selected {
+      border: 2px solid #4caf50;
+      background-color: #e8ffe8;
+    }
+    .productos-list {
+      margin-bottom: 20px;
+    }
+    .producto-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .removeProducto {
+      color: red;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create Venta</h1>
+  <form id="ventaForm">
+    <label for="empleado_id">Empleado ID:</label>
+    <input type="number" id="empleado_id" name="empleado_id" required>
+    <br><br>
+
+    <label for="cliente_id">Cliente ID (Optional):</label>
+    <input type="number" id="cliente_id" name="cliente_id">
+    <br><br>
+
+    <h3>Productos</h3>
+    <div class="grid-container" id="productosGrid"></div>
+    <div class="productos-list" id="productosList"></div>
+
+    <button type="submit">Create Venta</button>
+  </form>
+
+  <div id="response"></div>
+
+  <script src="venta.js"></script>
+</body>
+</html>
